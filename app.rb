@@ -11,3 +11,4 @@ File.open("/thp/semaine3/j3-sem3/lib/app/scrapper","scrapper") do | tableau |
     tableau.write(h_cities_email.to_json)
 end
 
+

@@ -17,7 +17,6 @@ def get_townhall_urls
     cities = page.xpath('//*[@class="lientxt"]')
 
     ary_result = [] # init arrray
-    
     cities.each do |city|
         h_cities_email = {} #init hash
         temp = city['href'].delete_prefix('./')
