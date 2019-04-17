@@ -1,30 +1,13 @@
-#require "bundler"
-#Bundler.require
+require 'bundler'
+Bundler.require
 
-#require 'csv'
-#mairies = CSV.read('../db/mairies.csv')
+$:.unshift File.expand_path("./../lib", __FILE__)
 
-read.csv("/home/labs/thp/semaine3/j3-sem3/db/.csv", header=TRUE, sep=",",na.strings = "NA")
+require 'app/scrapper'
+require 'pry'
 
-def get_townhall_email(townhall_URL)
-    page = Nokogiri::HTML(open(townhall_URL))
-
-    email = page.xpath('//main//section[2]//div//table//tbody//tr[4]/td[2]').text
-    return email
-end
-
-def get_townhall_urls
-    page = Nokogiri::HTML(open("http://annuaire-des-mairies.com/val-d-oise.html"))
-    cities = page.xpath('//*[@class="lientxt"]')
-
-    ary_result = [] # init arrray
-    cities.each do |city|
-        h_cities_email = {} #init hash
-        temp = city['href'].delete_prefix('./')
-        h_cities_email[city.text] = get_townhall_email("http://annuaire-des-mairies.com/#{temp}")
-        ary_result << h_cities_email
-    end
-    return ary_result
-end
-
-puts get_townhall_urls
+web_scrap = Scrapper.new("https://www.annuaire-des-mairies.com/")
+web_scrap.save_as_json(web_scrap.get_townhall_urls)
+json = File.read('db/emails.json')
+obj = JSON.parse(json)
+web_scrap.save_as_spreadsheet(obj)
