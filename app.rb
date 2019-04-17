@@ -1,14 +1,30 @@
-require "bundler"
-Bundler.require
+#require "bundler"
+#Bundler.require
 
-require "scrapper"
-$:.unshift File.expand_path("/thp/semaine3/j3-sem3/lib/app/scrapper", "scrapper")
+#require 'csv'
+#mairies = CSV.read('../db/mairies.csv')
 
-MyClass.new.perform
-Scrapper.new.perform
+read.csv("/home/labs/thp/semaine3/j3-sem3/db/.csv", header=TRUE, sep=",",na.strings = "NA")
 
-File.open("/thp/semaine3/j3-sem3/lib/app/scrapper","scrapper") do | tableau |
-    tableau.write(h_cities_email.to_json)
+def get_townhall_email(townhall_URL)
+    page = Nokogiri::HTML(open(townhall_URL))
+
+    email = page.xpath('//main//section[2]//div//table//tbody//tr[4]/td[2]').text
+    return email
 end
 
+def get_townhall_urls
+    page = Nokogiri::HTML(open("http://annuaire-des-mairies.com/val-d-oise.html"))
+    cities = page.xpath('//*[@class="lientxt"]')
 
+    ary_result = [] # init arrray
+    cities.each do |city|
+        h_cities_email = {} #init hash
+        temp = city['href'].delete_prefix('./')
+        h_cities_email[city.text] = get_townhall_email("http://annuaire-des-mairies.com/#{temp}")
+        ary_result << h_cities_email
+    end
+    return ary_result
+end
+
+puts get_townhall_urls
